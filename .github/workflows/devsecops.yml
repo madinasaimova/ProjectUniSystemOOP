@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+    build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -22,13 +22,11 @@ jobs:
       - name: Check Java version
         run: java -version
 
-      - name: Build project
+      - name: Build project (Maven)
         run: |
           echo "Building project..."
-          # Если Maven:
-          mvn clean compile
-          # Если Gradle — замени на:
-          # ./gradlew build
+          cd codes/unisystem2023
+          mvn clean compile --batch-mode
 
   scan:
     runs-on: ubuntu-latest
