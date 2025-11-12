@@ -9,7 +9,7 @@ jobs:
   build-and-scan:
     runs-on: ubuntu-latest
     steps:
-      # 1. Checkout (Получаем код)
+      # 1. Checkout (Получаем код
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Обязательно для SonarCloud
