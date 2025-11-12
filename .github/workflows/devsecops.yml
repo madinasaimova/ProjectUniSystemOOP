@@ -42,27 +42,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: java-build
-          path: codes/unisystem2023/target
-
-      - name: Verify compiled classes
-        run: |
-          if [ -d "codes/unisystem2023/target/classes" ]; then
-            echo "Classes found:"
-            ls -R codes/unisystem2023/target/classes
-          else
-            echo "Error: No classes found in target/classes!"
-            exit 1
-          fi
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+
+      - name: Build project for Sonar
+        run: |
+          cd codes/unisystem2023
+          mvn clean package -DskipTests
+          echo "Listing compiled classes:"
+          ls -R target/classes
 
       # --- SAST: SonarCloud ---
       - name: SAST - SonarCloud Scan
@@ -87,3 +78,4 @@ jobs:
           snyk test --file=pom.xml
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
