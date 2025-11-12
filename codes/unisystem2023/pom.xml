@@ -10,14 +10,15 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <sonar.projectKey>e497c231a1832c3daffa2dc3f3a70253416707b7</sonar.projectKey>
+
         <sonar.organization>madinasaimova</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.projectKey>madinasaimova_ProjectUniSystemOOP</sonar.projectKey>
     </properties>
 
     <dependencies>
         </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>
