@@ -56,11 +56,10 @@ jobs:
 
       # --- SAST: Semgrep Scan ---
       - name: SAST - Semgrep Scan
-        uses: returntocorp/semgrep-action@v2
-        with:
-          path: codes/unisystem2023
-          config: p/ci  # встроенный набор правил CI
-          baseline: true  # позволяет кэшировать предупреждения между запусками
+        run: |
+          pip install semgrep
+          cd codes/unisystem2023
+          semgrep --config p/ci --config p/default .
 
       # --- SCA: Snyk Test (Dependencies) ---
       - name: SCA - Snyk Test (Dependencies)
