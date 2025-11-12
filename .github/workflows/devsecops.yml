@@ -41,10 +41,15 @@ jobs:
 
       # 5. SCA - Snyk Test (Maven)
       - name: SCA - Snyk Test (Dependencies)
-        uses: snyk/actions/maven@master
+        run: |
+          # Устанавливаем JAVA_HOME вручную, чтобы Snyk CLI видел JDK
+          export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+          echo "JAVA_HOME=$JAVA_HOME"
+
+          # Проверяем Maven работает
+          mvn dependency:tree -DoutputType=dot --batch-mode --non-recursive --file="codes/unisystem2023/pom.xml"
+
+          # Запускаем Snyk
+          snyk test --all-projects --file=codes/unisystem2023/pom.xml
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-          # JAVA_HOME уже установлен после setup-java
-        with:
-          command: test
-          args: --file=codes/unisystem2023/pom.xml
