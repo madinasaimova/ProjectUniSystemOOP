@@ -43,11 +43,12 @@ jobs:
       # 5. SCA - Snyk Test (Maven)
       - name: SCA - Snyk Test (Dependencies)
         run: |
-          export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
-          echo "JAVA_HOME=$JAVA_HOME"
-          npm install -g snyk
-          mvn dependency:tree -DoutputType=dot --batch-mode --non-recursive --file="codes/unisystem2023/pom.xml"
-          snyk test --all-projects --file=codes/unisystem2023/pom.xml
-            env:
-              SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+            export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+            echo "JAVA_HOME=$JAVA_HOME"
+            npm install -g snyk
+            mvn dependency:tree -DoutputType=dot --batch-mode --non-recursive --file="codes/unisystem2023/pom.xml"
+            snyk test --file=codes/unisystem2023/pom.xml
+        env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
 
