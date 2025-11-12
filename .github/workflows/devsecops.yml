@@ -29,7 +29,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: cd codes/unisystem2023 && mvn clean verify sonar:sonar \
           -Dsonar.projectKey=e497c231a1832c3daffa2dc3f3a70253416707b7 \
-          -Dsonar.organization=madinasaimova
+          -Dsonar.organization=madinasaimova \
+          -Dsonar.branch.name=${{ github.ref_name }} # <-- ДОБАВИТЬ ЭТУ СТРОКУ!
 
       # 4. SCA (Snyk)
       - name: SCA - Snyk Test (Зависимости)
