@@ -22,13 +22,13 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # 3. SAST (SonarCloud)
+     # 3. SAST (SonarCloud)
       - name: SAST - SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        # Переходим в папку с pom.xml и запускаем упрощенный анализ
-        run: cd codes/unisystem2023 && mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-
+        # ДОБАВИТЬ: -e -X
+        run: cd codes/unisystem2023 && mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -e -X
+        
       # 4. SCA (Snyk)
       - name: SCA - Snyk Test (Зависимости)
         uses: snyk/actions/maven@master
