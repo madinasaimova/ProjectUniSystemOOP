@@ -34,7 +34,7 @@ jobs:
           path: codes/unisystem2023/target
 
   scan:
-    name: Security Scan (SonarCloud + Snyk)
+    name: Security Scan (Semgrep + Snyk)
     runs-on: ubuntu-latest
     needs: build
 
@@ -48,27 +48,21 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Build project for Sonar
+      - name: Build project for scanning
         run: |
           cd codes/unisystem2023
           mvn clean package -DskipTests
-          echo "Listing compiled classes:"
           ls -R target/classes
 
-      # --- SAST: SonarCloud ---
-      - name: SAST - SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5.0.0
+      # --- SAST: Semgrep Scan ---
+      - name: SAST - Semgrep Scan
+        uses: returntocorp/semgrep-action@v2
         with:
-          args: >
-            -Dsonar.projectKey=madinasaimova_ProjectUniSystemOOP
-            -Dsonar.organization=madinasaimova
-            -Dsonar.projectBaseDir=codes/unisystem2023
-            -Dsonar.java.binaries=codes/unisystem2023/target/classes
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
+          path: codes/unisystem2023
+          config: p/ci  # встроенный набор правил CI
+          baseline: true  # позволяет кэшировать предупреждения между запусками
 
-      # --- SCA: Snyk dependency test ---
+      # --- SCA: Snyk Test (Dependencies) ---
       - name: SCA - Snyk Test (Dependencies)
         run: |
           export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
@@ -78,4 +72,3 @@ jobs:
           snyk test --file=pom.xml
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
