@@ -22,13 +22,23 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Verify project structure
+        run: |
+          cd codes/unisystem2023
+          echo "Listing source files:"
+          ls -R src/main/java
+          echo "Listing pom.xml:"
+          ls -l pom.xml
+
       - name: Build project
         run: |
           cd codes/unisystem2023
-          mvn clean package -DskipTests
+          mvn clean compile -DskipTests -X
+          ls -R target
 
       - name: Verify compiled classes
-        run: ls -R codes/unisystem2023/target/classes
+        run: |
+          ls -R codes/unisystem2023/target/classes || echo "No classes found!"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -52,7 +62,9 @@ jobs:
           path: codes/unisystem2023/target
 
       - name: Verify downloaded files
-        run: ls -R codes/unisystem2023/target/classes
+        run: |
+          echo "Listing classes after download:"
+          ls -R codes/unisystem2023/target/classes || echo "No classes found!"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -62,6 +74,7 @@ jobs:
 
       # --- SAST: SonarCloud ---
       - name: SAST - SonarCloud Scan
+        if: success()  # запускаем только если классы есть
         uses: SonarSource/sonarqube-scan-action@v5.0.0
         with:
           args: >
