@@ -39,17 +39,15 @@ jobs:
           cd codes/unisystem2023
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
 
+
       # 5. SCA - Snyk Test (Maven)
       - name: SCA - Snyk Test (Dependencies)
         run: |
-          # Устанавливаем JAVA_HOME вручную, чтобы Snyk CLI видел JDK
           export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
           echo "JAVA_HOME=$JAVA_HOME"
-
-          # Проверяем Maven работает
+          npm install -g snyk
           mvn dependency:tree -DoutputType=dot --batch-mode --non-recursive --file="codes/unisystem2023/pom.xml"
-
-          # Запускаем Snyk
           snyk test --all-projects --file=codes/unisystem2023/pom.xml
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+            env:
+              SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
