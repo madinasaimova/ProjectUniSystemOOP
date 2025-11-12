@@ -22,25 +22,19 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-     # 3. SAST (SonarCloud)
+      # 3. SAST (SonarCloud)
       - name: SAST - SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        # ДОБАВИТЬ: -e -X
-        run: cd codes/unisystem2023 && mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -e -X
-        
-     # 4. Установка Snyk CLI
-          # Используем готовый Action для установки Snyk CLI
-          - name: Install Snyk CLI
-            uses: snyk/actions/setup-snyk@v1
-            
-          # 5. SCA (Snyk Test) - Запускаем в окружении с установленной Java
-          - name: SCA - Snyk Test (Зависимости)
-            env:
-              SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-              # Передайте SNYK_TOKEN
-            run: |
-              # Используем команду run, а не uses:action, чтобы остаться в текущем контейнере
-              # Обратите внимание: нужно указать файл pom.xml, как в вашем логе:
-              snyk test --maven-aggregate --file=codes/unisystem2023/pom.xml
-              # Или, если pom.xml находится в корне: snyk test --maven-aggregate
+        # Переход в папку с pom.xml и запуск упрощенного анализа Maven
+        run: cd codes/unisystem2023 && mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+
+      # 4. SCA (Snyk)
+      - name: SCA - Snyk Test (Зависимости)
+        uses: snyk/actions/maven@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: test
+          # Указываем точный путь к pom.xml относительно корня репозитория
+          args: --file=codes/unisystem2023/pom.xml
