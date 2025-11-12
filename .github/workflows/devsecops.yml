@@ -48,8 +48,15 @@ jobs:
           name: java-build
           path: codes/unisystem2023/target
 
-      - name: Verify downloaded files
-        run: ls -R codes/unisystem2023/target
+      - name: Verify compiled classes
+        run: |
+          if [ -d "codes/unisystem2023/target/classes" ]; then
+            echo "Classes found:"
+            ls -R codes/unisystem2023/target/classes
+          else
+            echo "Error: No classes found in target/classes!"
+            exit 1
+          fi
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -58,7 +65,6 @@ jobs:
           distribution: 'temurin'
 
       # --- SAST: SonarCloud ---
-            # --- SAST: SonarCloud ---
       - name: SAST - SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5.0.0
         with:
@@ -70,7 +76,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
-
 
       # --- SCA: Snyk dependency test ---
       - name: SCA - Snyk Test (Dependencies)
