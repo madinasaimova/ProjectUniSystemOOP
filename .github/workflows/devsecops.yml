@@ -14,8 +14,9 @@ jobs:
         with:
           fetch-depth: 0 # Обязательно для SonarCloud
 
-      # 2. Setup Java
+      # 2. Setup Java (Устанавливаем ID для получения пути к JAVA_HOME)
       - name: Set up JDK 17
+        id: setup-java # <-- ДОБАВЛЕНО ID для Шага 4
         uses: actions/setup-java@v4
         with:
           java-version: '17'
@@ -26,7 +27,7 @@ jobs:
       - name: SAST - SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        # Переход в папку с pom.xml и запуск упрощенного анализа Maven
+        # Переход в папку с pom.xml и запуск анализа
         run: cd codes/unisystem2023 && mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
 
       # 4. SCA (Snyk)
@@ -34,6 +35,8 @@ jobs:
         uses: snyk/actions/maven@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          # ИСПРАВЛЕНИЕ: Передаем путь к Java для Snyk Docker из Шага 2
+          JAVA_HOME: ${{ steps.setup-java.outputs.path }} 
         with:
           command: test
           # Указываем точный путь к pom.xml относительно корня репозитория
